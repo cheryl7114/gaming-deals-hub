@@ -1,5 +1,23 @@
 bin/
 obj/
 /packages/
+**/node_modules/
 riderModule.iml
 /_ReSharper.Caches/
+
+# IDE and user-specific files
+.vs/
+.idea/**/workspace.xml
+*.user
+*.suo
+
+# Test output
+TestResults/
+
+# macOS
+.DS_Store
+
+# Local secrets (keep a safe template such as .env.example tracked)
+.env
+.env.*
+!.env.example

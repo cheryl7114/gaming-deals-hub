@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k \"npm:watch:css\" \"TMPDIR=/tmp dotnet watch\"",
+    "build:css": "tailwindcss -i ./Styles/tailwind.css -o ./wwwroot/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./Styles/tailwind.css -o ./wwwroot/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "concurrently": "^9.2.0",
+    "tailwindcss": "^4.1.0"
+  },
+  "overrides": {
+    "@parcel/watcher": "^2.6.0"
+  }
+}
