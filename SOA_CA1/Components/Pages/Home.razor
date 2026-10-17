@@ -1,7 +1,61 @@
 ﻿@page "/"
+@using SOA_CA1.ApiClients
+@using SOA_CA1.Models
+@inject RawgApiClient Rawg
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Game search</PageTitle>
 
-<h1 class="text-red-800">Hello, world!</h1>
+<h1>Search RAWG games</h1>
 
-<p class="text-9xl text-red-800">Welcome to your new app hi hi.</p>
+<input @bind="searchTerm" />
+<button @onclick="SearchAsync" disabled="@isLoading">Search</button>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+@if (error is not null)
+{
+    <p role="alert">@error</p>
+}
+@foreach (var game in games)
+{
+    <article>
+        <h2>@game.Name</h2>
+        <p>Rating: @(game.Rating?.ToString() ?? "Not rated")</p>
+        @if (game.ArtworkUrl is not null)
+        {
+            <img src="@game.ArtworkUrl" alt="@game.Name" width="200" />
+        }
+    </article>
+}
+
+@code {
+    private string searchTerm;
+    private List<Game> games = [];
+    private bool isLoading;
+    private string? error;
+
+    private async Task SearchAsync()
+    {
+        isLoading = true;
+        error = null;
+
+        try
+        {
+            games = (await Rawg.SearchGamesAsync(searchTerm)).ToList();
+        }
+        catch (HttpRequestException ex)
+        {
+            error = $"RAWG request failed: {ex.Message}";
+        }
+        catch (InvalidOperationException ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

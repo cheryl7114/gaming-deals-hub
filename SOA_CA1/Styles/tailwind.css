@@ -4,3 +4,102 @@
 @import "../wwwroot/lib/bootstrap/dist/css/bootstrap.min.css" layer(bootstrap);
 
 @source "../Components/**/*.razor";
+
+@layer components {
+    .site-header {
+        @apply sticky top-0 z-[100] w-full border-b border-slate-400/15 bg-[#0a0e16]/95 text-slate-50 backdrop-blur-xl;
+    }
+
+    .nav-shell {
+        @apply mx-auto flex min-h-[76px] w-[calc(100%-3rem)] max-w-[1440px] items-center gap-[clamp(1.5rem,4vw,3.5rem)];
+    }
+
+    .brand-link {
+        @apply inline-flex items-center gap-3 text-inherit no-underline;
+    }
+
+    .brand-mark {
+        @apply grid size-[42px] shrink-0 place-items-center rounded-xl border border-lime-400/35 bg-gradient-to-br from-lime-400/20 to-lime-400/5 text-lime-400;
+    }
+
+    .brand-mark svg {
+        @apply size-[25px] stroke-current;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.7;
+    }
+
+    .brand-copy {
+        @apply grid gap-[0.1rem];
+    }
+
+    .brand-name {
+        @apply text-[1.1rem] font-extrabold tracking-[0.08em] leading-none;
+    }
+
+    .brand-highlight {
+        @apply text-lime-400;
+    }
+
+    .brand-caption {
+        @apply text-[0.58rem] font-bold tracking-[0.12em] text-slate-400;
+    }
+
+    .main-nav {
+        @apply flex self-stretch items-center gap-7;
+    }
+
+    .nav-link {
+        @apply relative inline-flex self-stretch items-center text-[0.92rem] font-semibold text-slate-300 no-underline transition-colors;
+    }
+
+    .nav-link::after {
+        @apply absolute right-0 bottom-0 left-0 h-0.5 origin-left scale-x-0 bg-lime-400 transition-transform;
+        content: "";
+    }
+
+    .nav-link:hover,
+    .nav-link[aria-current="page"] {
+        @apply text-white;
+    }
+
+    .nav-link[aria-current="page"]::after {
+        @apply scale-x-100;
+    }
+
+    .nav-tagline {
+        @apply ml-auto inline-flex items-center gap-2 text-[0.78rem] font-bold tracking-[0.04em] text-lime-400 uppercase;
+    }
+
+    .status-dot {
+        @apply size-[7px] rounded-full bg-current shadow-[0_0_12px_rgba(163,230,53,0.75)];
+    }
+
+    .brand-link:focus-visible,
+    .nav-link:focus-visible {
+        @apply rounded outline-2 outline-offset-[5px] outline-lime-400;
+    }
+
+    @media (max-width: 600px) {
+        .nav-shell {
+            @apply min-h-[68px] w-[calc(100%-2rem)] gap-5;
+        }
+
+        .nav-tagline {
+            @apply hidden;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .brand-caption {
+            @apply hidden;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .nav-link,
+        .nav-link::after {
+            transition: none;
+        }
+    }
+}
