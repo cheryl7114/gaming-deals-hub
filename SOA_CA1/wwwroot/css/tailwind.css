@@ -905,10 +905,6 @@
   .align-top {
     vertical-align: top;
   }
-  .text-9xl {
-    font-size: var(--text-9xl);
-    line-height: var(--tw-leading, var(--text-9xl--line-height));
-  }
   .text-nowrap {
     text-wrap: nowrap;
   }
@@ -917,9 +913,6 @@
   }
   .text-black {
     color: var(--color-black);
-  }
-  .text-red-800 {
-    color: var(--color-red-800);
   }
   .text-slate-50 {
     color: var(--color-slate-50);

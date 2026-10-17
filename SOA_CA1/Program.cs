@@ -1,10 +1,13 @@
 using SOA_CA1.Components;
+using SOA_CA1.ApiClients;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddHttpClient<RawgApiClient>(client =>
+    client.BaseAddress = new Uri("https://api.rawg.io/api/"));
 
 var app = builder.Build();
 
