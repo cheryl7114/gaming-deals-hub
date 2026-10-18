@@ -8,6 +8,9 @@ public class Game
     private decimal? rating;
     private string? artworkUrl;
     private string? cheapSharkGameId;
+    private string? description;
+    private List<string> developers = [];
+    private List<string> screenshots = [];
 
     public Game(
         int rawgId,
@@ -15,6 +18,7 @@ public class Game
         DateOnly? releaseDate,
         decimal? rating,
         string? artworkUrl,
+        string? description,
         string? cheapSharkGameId = null)
     {
         this.rawgId = rawgId;
@@ -23,6 +27,7 @@ public class Game
         this.rating = rating;
         this.artworkUrl = artworkUrl;
         this.cheapSharkGameId = cheapSharkGameId;
+        this.description = description;
     }
 
     public int RawgId
@@ -59,5 +64,22 @@ public class Game
     {
         get { return cheapSharkGameId; }
         set { cheapSharkGameId = value; }
+    }
+    public string? Description
+    {
+        get { return description; }
+        set { description = value; }
+    }
+
+    public List<string> Developers
+    {
+        get { return developers; }
+        set { developers = value; }
+    }
+
+    public List<string> Screenshots
+    {
+        get { return screenshots; }
+        set { screenshots = value; }
     }
 }

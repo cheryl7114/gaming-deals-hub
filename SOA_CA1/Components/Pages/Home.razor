@@ -21,8 +21,12 @@
 @foreach (var game in games)
 {
     <article>
-        <h2>@game.Name</h2>
+        <a href="@($"/games/{game.RawgId}")">
+            <h2>@game.Name</h2>
+        </a>
+
         <p>Rating: @(game.Rating?.ToString() ?? "Not rated")</p>
+
         @if (game.ArtworkUrl is not null)
         {
             <img src="@game.ArtworkUrl" alt="@game.Name" width="200" />
