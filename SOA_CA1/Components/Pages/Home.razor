@@ -3,47 +3,156 @@
 @using SOA_CA1.Models
 @inject RawgApiClient Rawg
 
-<PageTitle>Game search</PageTitle>
+<PageTitle>Discover games | GameHub</PageTitle>
 
-<h1>Search RAWG games</h1>
+<div class="home-page">
+    <section class="home-hero" aria-labelledby="home-title">
+        <div class="home-hero-copy">
+            <p class="home-eyebrow"><span aria-hidden="true"></span> Your next adventure starts here</p>
+            <h1 id="home-title">Discover your next <span>favorite game.</span></h1>
+            <p class="home-intro">Explore what players are adding to their collections, or search RAWG’s game library.</p>
 
-<input @bind="searchTerm" />
-<button @onclick="SearchAsync" disabled="@isLoading">Search</button>
+            <form class="home-search" @onsubmit="SearchAsync" @onsubmit:preventDefault>
+                <label class="sr-only" for="game-search">Search games</label>
+                <svg class="home-search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m16 16 4 4" />
+                </svg>
+                <input id="game-search"
+                       type="search"
+                       required
+                       placeholder="Search games..."
+                       @bind="searchTerm" />
+                <button type="submit" disabled="@isLoading">
+                    @(isLoading ? "Loading..." : "Search")
+                </button>
+            </form>
+        </div>
+    </section>
 
-@if (isLoading)
-{
-    <p>Loading...</p>
-}
-@if (error is not null)
-{
-    <p role="alert">@error</p>
-}
-@foreach (var game in games)
-{
-    <article>
-        <a href="@($"/games/{game.RawgId}")">
-            <h2>@game.Name</h2>
-        </a>
+    <section class="home-games" aria-labelledby="games-heading">
+        <div class="home-section-heading">
+            <div>
+                <p class="home-section-kicker">DISCOVER</p>
+                <h2 id="games-heading">@((isSearchResults) ? "Search results" : "Popular")</h2>
+                <p class="home-section-description">
+                    @(isSearchResults
+                        ? $"Games matching “{searchTerm}”."
+                        : "Popular picks based on how many players have added them to their lists.")
+                </p>
+            </div>
+            @if (!isSearchResults && games.Count > 0)
+            {
+                <span class="home-results-count">@games.Count games</span>
+            }
+        </div>
 
-        <p>Rating: @(game.Rating?.ToString() ?? "Not rated")</p>
-
-        @if (game.ArtworkUrl is not null)
+        @if (error is not null)
         {
-            <img src="@game.ArtworkUrl" alt="@game.Name" width="200" />
+            <div class="home-message home-error" role="alert">
+                <span class="home-message-icon" aria-hidden="true">!</span>
+                <div>
+                    <strong>We couldn’t load the games</strong>
+                    <p>@error</p>
+                </div>
+            </div>
         }
-    </article>
-}
+        else if (isLoading)
+        {
+            <div class="home-message home-loading" role="status">
+                <span class="home-spinner" aria-hidden="true"></span>
+                <span>Loading games...</span>
+            </div>
+        }
+        else if (games.Count == 0)
+        {
+            <div class="home-empty">
+                <span aria-hidden="true">⌕</span>
+                <h3>No games to show</h3>
+                <p>Try another search to find your next game.</p>
+            </div>
+        }
+        else
+        {
+            <div class="home-game-grid">
+                @foreach (var game in games)
+                {
+                    <a class="home-game-card group" href="@($"/games/{game.RawgId}")" aria-label="@($"View details for {game.Name}")">
+                        <div class="home-game-art">
+                            @if (game.ArtworkUrl is not null)
+                            {
+                                <img src="@game.ArtworkUrl" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="home-art-placeholder" aria-hidden="true">GAMEHUB</div>
+                            }
+                        </div>
+                        <div class="home-game-info">
+                            <h3>@game.Name</h3>
+                            <div class="home-game-meta">
+                                <span class="home-rating">
+                                    <span aria-hidden="true">★</span>
+                                    @(game.Rating?.ToString("0.0") ?? "N/A")
+                                </span>
+                                <span>@(game.ReleaseDate?.ToString("yyyy") ?? "Release date unknown")</span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </section>
+</div>
 
 @code {
-    private string searchTerm;
+    private string searchTerm = string.Empty;
     private List<Game> games = [];
     private bool isLoading;
+    private bool isSearchResults;
     private string? error;
 
-    private async Task SearchAsync()
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPopularGamesAsync();
+    }
+
+    private async Task LoadPopularGamesAsync()
     {
         isLoading = true;
         error = null;
+        isSearchResults = false;
+
+        try
+        {
+            games = (await Rawg.GetPopularGamesAsync()).ToList();
+        }
+        catch (HttpRequestException ex)
+        {
+            error = $"RAWG request failed: {ex.Message}";
+        }
+        catch (InvalidOperationException ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            error = "Enter a game name to search.";
+            isSearchResults = true;
+            return;
+        }
+
+        isLoading = true;
+        error = null;
+        isSearchResults = true;
 
         try
         {

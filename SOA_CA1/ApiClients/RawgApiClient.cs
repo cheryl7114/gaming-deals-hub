@@ -59,6 +59,17 @@ public class RawgApiClient(HttpClient httpClient, IConfiguration configuration)
 
         return game;
     }
+    
+    // fetch 12 popular games (ordered by number of users who added the game to their library)
+    public async Task<IReadOnlyList<Game>> GetPopularGamesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var url = BuildApiUrl("games", "&page_size=12&ordering=-added");
+        var response = await httpClient.GetFromJsonAsync<RawgGamesResponse>(
+            url, cancellationToken);
+
+        return response?.Results?.Select(MapGame).ToArray() ?? [];
+    }
 
     private string BuildApiUrl(string path, string query = "")
     {

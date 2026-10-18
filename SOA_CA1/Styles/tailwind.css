@@ -75,6 +75,194 @@
         @apply size-[7px] rounded-full bg-current shadow-[0_0_12px_rgba(163,230,53,0.75)];
     }
 
+    .home-page {
+        @apply mx-auto max-w-7xl px-1 py-5 text-slate-100 sm:px-3 lg:py-8;
+    }
+
+    .home-hero {
+        @apply mb-10 rounded-2xl border border-white/[0.06] bg-[#101722] px-5 py-7 sm:px-8 sm:py-8;
+    }
+
+    .home-hero-copy {
+        @apply w-full;
+    }
+
+    .home-eyebrow {
+        @apply mb-3 flex items-center gap-2 text-[0.7rem] font-bold tracking-[0.12em] text-lime-300 uppercase;
+    }
+
+    .home-eyebrow span {
+        @apply size-1.5 rounded-full bg-lime-400;
+    }
+
+    .home-hero h1 {
+        @apply text-3xl leading-tight font-extrabold tracking-tight text-white sm:text-4xl;
+    }
+
+    .home-hero h1 span {
+        @apply text-lime-400;
+    }
+
+    .home-intro {
+        @apply mt-3 text-sm leading-6 text-slate-400;
+    }
+
+    .home-search {
+        @apply mt-5 flex w-full items-center gap-2 rounded-xl border border-white/10 bg-[#0b111b] p-1 transition focus-within:border-lime-400/40;
+    }
+
+    .home-search-icon {
+        @apply ml-2 size-4 shrink-0 stroke-slate-500;
+        stroke-width: 1.8;
+    }
+
+    .home-search input {
+        @apply min-w-0 flex-1 border-0 bg-transparent px-1 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:ring-0;
+    }
+
+    .home-search button {
+        @apply shrink-0 rounded-lg bg-lime-400 px-4 py-2.5 text-sm font-bold text-slate-950 transition hover:bg-lime-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-300 disabled:cursor-wait disabled:opacity-60;
+    }
+
+    .home-games {
+        @apply scroll-mt-24;
+    }
+
+    .home-section-heading {
+        @apply mb-6 flex items-end justify-between gap-5;
+    }
+
+    .home-section-kicker {
+        @apply mb-2 text-[0.68rem] font-extrabold tracking-[0.2em] text-lime-400;
+    }
+
+    .home-section-heading h2 {
+        @apply text-2xl font-extrabold tracking-tight text-white sm:text-3xl;
+    }
+
+    .home-section-description {
+        @apply mt-2 text-sm text-slate-400;
+    }
+
+    .home-results-count {
+        @apply mb-1 shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-slate-400;
+    }
+
+    .home-game-grid {
+        @apply grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+    }
+
+    .home-game-card {
+        @apply min-w-0 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111823] text-inherit no-underline shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-lime-300/35 hover:shadow-xl hover:shadow-lime-950/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400;
+    }
+
+    .home-game-art {
+        @apply relative aspect-[16/10] overflow-hidden bg-slate-900;
+    }
+
+    .home-game-art::after {
+        @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent;
+        content: "";
+    }
+
+    .home-game-art img {
+        @apply h-full w-full object-cover transition duration-500 group-hover:scale-105;
+    }
+
+    .home-art-placeholder {
+        @apply grid h-full w-full place-items-center bg-[radial-gradient(ellipse_at_center,rgba(163,230,53,0.1),transparent_70%)] text-xs font-black tracking-[0.25em] text-slate-600;
+    }
+
+    .home-game-info {
+        @apply p-4;
+    }
+
+    .home-game-info h3 {
+        @apply truncate text-base font-bold text-slate-100 transition group-hover:text-lime-300;
+    }
+
+    .home-game-meta {
+        @apply mt-3 flex items-center justify-between gap-2 text-xs text-slate-500;
+    }
+
+    .home-rating {
+        @apply inline-flex items-center gap-1.5 font-semibold text-slate-300;
+    }
+
+    .home-rating span {
+        @apply text-amber-300;
+    }
+
+    .home-message {
+        @apply flex min-h-28 items-center justify-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-sm text-slate-300;
+    }
+
+    .home-loading {
+        @apply text-slate-400;
+    }
+
+    .home-spinner {
+        @apply size-5 animate-spin rounded-full border-2 border-slate-600 border-t-lime-400;
+    }
+
+    .home-error {
+        @apply justify-start border-red-400/20 bg-red-950/20 text-red-200;
+    }
+
+    .home-error strong {
+        @apply font-bold;
+    }
+
+    .home-error p {
+        @apply mt-1 text-sm text-red-200/70;
+    }
+
+    .home-message-icon {
+        @apply grid size-8 shrink-0 place-items-center rounded-full bg-red-400/10 font-bold text-red-300;
+    }
+
+    .home-empty {
+        @apply flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-5 text-center;
+    }
+
+    .home-empty > span {
+        @apply mb-3 text-4xl text-slate-600;
+    }
+
+    .home-empty h3 {
+        @apply text-lg font-bold text-slate-200;
+    }
+
+    .home-empty p {
+        @apply mt-1 text-sm text-slate-500;
+    }
+
+    @media (max-width: 600px) {
+        .home-page {
+            @apply px-0 py-2;
+        }
+
+        .home-hero {
+            @apply mb-8 px-5 py-6;
+        }
+
+        .home-search {
+            @apply gap-2;
+        }
+
+        .home-search button {
+            @apply px-4;
+        }
+
+        .home-section-heading {
+            @apply items-start;
+        }
+
+        .home-results-count {
+            @apply mt-1;
+        }
+    }
+
     .game-details-page {
         @apply mx-auto max-w-6xl px-4 py-8 text-slate-100 sm:px-6 lg:py-12;
     }
