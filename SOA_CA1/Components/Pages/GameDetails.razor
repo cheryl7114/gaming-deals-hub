@@ -1,0 +1,93 @@
+@page "/games/{RawgId:int}"
+@using SOA_CA1.ApiClients
+@using SOA_CA1.Models
+@inject RawgApiClient Rawg
+
+<PageTitle>@(game?.Name ?? "Game details")</PageTitle>
+
+<a href="/">Back to search</a>
+
+@if (isLoading)
+{
+    <p>Loading game details...</p>
+}
+else if (error is not null)
+{
+    <p role="alert">@error</p>
+}
+else if (game is not null)
+{
+    <h1>@game.Name</h1>
+
+    @if (game.ArtworkUrl is not null)
+    {
+        <img src="@game.ArtworkUrl" alt="@game.Name" width="400" />
+    }
+
+    <p>Released: @(game.ReleaseDate?.ToString("d MMM yyyy") ?? "Unknown")</p>
+    <p>Rating: @(game.Rating?.ToString() ?? "Not rated")</p>
+    <p>@(string.IsNullOrWhiteSpace(game.Description)
+        ? "Description not available."
+        : game.Description)</p>
+
+    <h2>Developers</h2>
+    @if (game.Developers.Count > 0)
+    {
+        <p>@string.Join(", ", game.Developers)</p>
+    }
+    else
+    {
+        <p>Developer information not available.</p>
+    }
+
+    <h2>Screenshots</h2>
+    @if (game.Screenshots.Count > 0)
+    {
+        <div class="game-screenshots">
+            @foreach (var screenshot in game.Screenshots)
+            {
+                <img src="@screenshot" alt="@($"{game.Name} screenshot")" loading="lazy" />
+            }
+        </div>
+    }
+    else
+    {
+        <p>No additional screenshots available.</p>
+    }
+}
+
+@code {
+    [Parameter]
+    public int RawgId { get; set; }
+
+    private Game? game;
+    private bool isLoading;
+    private string? error;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        error = null;
+
+        try
+        {
+            game = await Rawg.GetFullDetailsAsync(RawgId);
+        }
+        catch (HttpRequestException ex)
+        {
+            error = $"RAWG request failed: {ex.Message}";
+        }
+        catch (InvalidOperationException ex)
+        {
+            error = ex.Message;
+        }
+        catch (InvalidDataException ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
