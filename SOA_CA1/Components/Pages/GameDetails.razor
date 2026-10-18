@@ -5,54 +5,145 @@
 
 <PageTitle>@(game?.Name ?? "Game details")</PageTitle>
 
-<a href="/">Back to search</a>
-
 @if (isLoading)
 {
-    <p>Loading game details...</p>
+    <main class="game-details-page game-details-loading">
+        <p>Loading game details...</p>
+    </main>
 }
 else if (error is not null)
 {
-    <p role="alert">@error</p>
+    <main class="game-details-page game-details-error">
+        <a class="game-back-link" href="/">← Back to search</a>
+        <p role="alert">@error</p>
+    </main>
 }
 else if (game is not null)
 {
-    <h1>@game.Name</h1>
+    <main class="game-details-page">
+        <a class="game-back-link" href="/">← Back to search</a>
 
-    @if (game.ArtworkUrl is not null)
-    {
-        <img src="@game.ArtworkUrl" alt="@game.Name" width="400" />
-    }
+        @if (Photos.Count > 0)
+        {
+            <section aria-label="Game images" class="game-gallery">
+                <div class="game-gallery-heading">
+                    <h2>Screenshots & artwork</h2>
+                    <span>Select an image to view it</span>
+                </div>
+                <div class="game-gallery-track">
+                    @for (var index = 0; index < Photos.Count; index++)
+                    {
+                        var photoIndex = index;
+                        <button class="game-gallery-item"
+                                type="button"
+                                aria-label="@($"View image {photoIndex + 1} of {Photos.Count} for {game.Name}")"
+                                @onclick="() => OpenPhoto(photoIndex)">
+                            <img class="game-gallery-image"
+                                 src="@Photos[photoIndex]"
+                                 alt="@($"{game.Name} image {photoIndex + 1}")"
+                                 loading="lazy" />
+                            <span class="game-gallery-overlay"></span>
+                        </button>
+                    }
+                </div>
+            </section>
+        }
 
-    <p>Released: @(game.ReleaseDate?.ToString("d MMM yyyy") ?? "Unknown")</p>
-    <p>Rating: @(game.Rating?.ToString() ?? "Not rated")</p>
-    <p>@(string.IsNullOrWhiteSpace(game.Description)
-        ? "Description not available."
-        : game.Description)</p>
+        <section class="game-content-grid">
+            <div class="game-content">
+                <p class="game-eyebrow">Game details</p>
+                <h1 class="game-title">@game.Name</h1>
 
-    <h2>Developers</h2>
-    @if (game.Developers.Count > 0)
-    {
-        <p>@string.Join(", ", game.Developers)</p>
-    }
-    else
-    {
-        <p>Developer information not available.</p>
-    }
+                <div class="game-meta game-meta-mobile md:hidden">
+                    <div class="game-meta-card">
+                        <p class="game-meta-label">Released</p>
+                        <p class="game-meta-value">@(game.ReleaseDate?.ToString("d MMM yyyy") ?? "Unknown")</p>
+                    </div>
+                    <div class="game-meta-card">
+                        <p class="game-meta-label">Rating</p>
+                        <p class="game-meta-value"><span>⭐</span> @(game.Rating?.ToString() ?? "Not rated")</p>                    </div>
+                </div>
 
-    <h2>Screenshots</h2>
-    @if (game.Screenshots.Count > 0)
+                <div class="game-panel">
+                    <h2 class="game-panel-title">About this game</h2>
+                    <p class="game-description">@(string.IsNullOrWhiteSpace(game.Description)
+                        ? "Description not available."
+                        : game.Description)</p>
+                </div>
+
+                <div class="game-panel game-developers">
+                    <h2 class="game-panel-title">Developers</h2>
+                    @if (game.Developers.Count > 0)
+                    {
+                        <p class="game-description">@string.Join(", ", game.Developers)</p>
+                    }
+                    else
+                    {
+                        <p class="game-muted">Developer information not available.</p>
+                    }
+                </div>
+            </div>
+
+            <aside class="game-sidebar">
+                @if (game.ArtworkUrl is not null)
+                {
+                    <button class="game-artwork-button"
+                            type="button"
+                            aria-label="View main artwork"
+                            @onclick="() => OpenPhoto(0)">
+                        <img class="game-artwork-image"
+                             src="@game.ArtworkUrl"
+                             alt="@($"{game.Name} artwork")" />
+                    </button>
+                }
+
+                <div class="game-meta game-meta-sidebar hidden md:flex">
+                    <div class="game-meta-card">
+                        <p class="game-meta-label">Released</p>
+                        <p class="game-meta-value">@(game.ReleaseDate?.ToString("d MMM yyyy") ?? "Unknown")</p>
+                    </div>
+                    <div class="game-meta-card">
+                        <p class="game-meta-label">Rating</p>
+                        <p class="game-meta-value">@(game.Rating?.ToString() ?? "Not rated")</p>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    // photo display lightbox
+    @if (selectedPhotoIndex is int selectedIndex)
     {
-        <div class="game-screenshots">
-            @foreach (var screenshot in game.Screenshots)
-            {
-                <img src="@screenshot" alt="@($"{game.Name} screenshot")" loading="lazy" />
-            }
+        <div class="game-lightbox"
+             role="presentation"
+             @onclick="ClosePhoto">
+            <section class="game-lightbox-content"
+                     role="dialog"
+                     aria-modal="true"
+                     aria-label="@($"{game.Name} image viewer")"
+                     @onclick:stopPropagation="true">
+                <button class="game-lightbox-nav"
+                        type="button"
+                        aria-label="Previous image"
+                        disabled="@(Photos.Count < 2)"
+                        @onclick="ShowPreviousPhoto">‹</button>
+
+                <img class="game-lightbox-image"
+                     src="@Photos[selectedIndex]"
+                     alt="@($"{game.Name} image {selectedIndex + 1} of {Photos.Count}")" />
+
+                <button class="game-lightbox-nav"
+                        type="button"
+                        aria-label="Next image"
+                        disabled="@(Photos.Count < 2)"
+                        @onclick="ShowNextPhoto">›</button>
+
+                <button class="game-lightbox-close"
+                        type="button"
+                        aria-label="Close image viewer"
+                        @onclick="ClosePhoto">×</button>
+            </section>
         </div>
-    }
-    else
-    {
-        <p>No additional screenshots available.</p>
     }
 }
 
@@ -63,6 +154,36 @@ else if (game is not null)
     private Game? game;
     private bool isLoading;
     private string? error;
+    private int? selectedPhotoIndex;
+
+    // The main artwork is the first item, followed by RAWG's extra screenshots.
+    private List<string> Photos => game is null
+        ? []
+        : (new[] { game.ArtworkUrl })
+            .OfType<string>()
+            .Concat(game.Screenshots)
+            .Distinct()
+            .ToList();
+
+    private void OpenPhoto(int index) => selectedPhotoIndex = index;
+
+    private void ClosePhoto() => selectedPhotoIndex = null;
+
+    private void ShowPreviousPhoto()
+    {
+        if (Photos.Count > 1 && selectedPhotoIndex is int index)
+        {
+            selectedPhotoIndex = (index - 1 + Photos.Count) % Photos.Count;
+        }
+    }
+
+    private void ShowNextPhoto()
+    {
+        if (Photos.Count > 1 && selectedPhotoIndex is int index)
+        {
+            selectedPhotoIndex = (index + 1) % Photos.Count;
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {

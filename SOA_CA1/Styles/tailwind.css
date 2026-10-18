@@ -75,6 +75,166 @@
         @apply size-[7px] rounded-full bg-current shadow-[0_0_12px_rgba(163,230,53,0.75)];
     }
 
+    .game-details-page {
+        @apply mx-auto max-w-6xl px-4 py-8 text-slate-100 sm:px-6 lg:py-12;
+    }
+
+    .game-details-loading {
+        @apply py-12 text-slate-200;
+    }
+
+    .game-details-loading p {
+        @apply animate-pulse text-slate-400;
+    }
+
+    .game-details-error {
+        @apply py-12;
+    }
+
+    .game-details-error [role="alert"] {
+        @apply rounded-xl border border-red-400/30 bg-red-950/40 p-4 text-red-200;
+    }
+
+    .game-back-link {
+        @apply mb-6 inline-flex items-center gap-2 text-sm font-semibold text-lime-400 no-underline transition hover:text-lime-300;
+    }
+
+    .game-details-error .game-back-link {
+        @apply mb-8;
+    }
+
+    .game-gallery {
+        @apply mb-10;
+    }
+
+    .game-gallery-heading {
+        @apply mb-3 flex items-center justify-between gap-4;
+    }
+
+    .game-gallery-heading h2 {
+        @apply text-sm font-bold tracking-widest text-slate-400 uppercase;
+    }
+
+    .game-gallery-heading span {
+        @apply text-xs text-slate-500;
+    }
+
+    .game-gallery-track {
+        @apply flex snap-x snap-mandatory gap-3 overflow-x-auto pb-4;
+    }
+
+    .game-gallery-item {
+        @apply relative h-32 w-56 shrink-0 snap-start overflow-hidden rounded-xl border border-white/10 bg-slate-900 transition hover:border-lime-400/70 focus-visible:outline-2 focus-visible:outline-lime-400 sm:h-40 sm:w-72;
+    }
+
+    .game-gallery-image {
+        @apply h-full w-full object-cover transition duration-300;
+    }
+
+    .game-gallery-item:hover .game-gallery-image {
+        @apply scale-105;
+    }
+
+    .game-gallery-overlay {
+        @apply absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition;
+    }
+
+    .game-gallery-item:hover .game-gallery-overlay {
+        @apply opacity-100;
+    }
+
+    .game-content-grid {
+        @apply grid gap-8 md:grid-cols-[minmax(0,1fr)_16rem] lg:grid-cols-[minmax(0,1fr)_18rem];
+    }
+
+    .game-content {
+        @apply order-2 min-w-0 md:order-1;
+    }
+
+    .game-eyebrow {
+        @apply mb-2 text-xs font-bold tracking-[0.2em] text-lime-400 uppercase;
+    }
+
+    .game-title {
+        @apply mb-6 text-3xl font-black tracking-tight sm:text-5xl;
+    }
+
+    .game-meta {
+        @apply mb-8 flex flex-wrap gap-3;
+    }
+
+    .game-meta-sidebar {
+        @apply hidden md:flex md:flex-col;
+    }
+
+    .game-sidebar {
+        @apply order-1 flex min-w-0 flex-col gap-5 md:order-2;
+    }
+
+    .game-meta-card {
+        @apply rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3;
+    }
+
+    .game-meta-label {
+        @apply text-xs font-semibold tracking-wider text-slate-500 uppercase;
+    }
+
+    .game-meta-value {
+        @apply mt-1 font-semibold text-slate-100;
+    }
+
+    .game-panel {
+        @apply rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-7;
+    }
+
+    .game-developers {
+        @apply mt-6;
+    }
+
+    .game-panel-title {
+        @apply mb-3 text-xl font-bold;
+    }
+
+    .game-description {
+        @apply whitespace-pre-line leading-7 text-slate-300;
+    }
+
+    .game-muted {
+        @apply text-slate-500;
+    }
+
+    .game-artwork-button {
+        @apply h-fit overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl shadow-black/30 focus-visible:outline-2 focus-visible:outline-lime-400;
+    }
+
+    .game-artwork-image {
+        @apply max-h-[32rem] w-full object-cover transition duration-300;
+    }
+
+    .game-artwork-button:hover .game-artwork-image {
+        @apply scale-[1.02];
+    }
+
+    .game-lightbox {
+        @apply fixed inset-0 z-[200] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm;
+    }
+
+    .game-lightbox-content {
+        @apply relative flex max-h-full w-full max-w-6xl items-center justify-center gap-2 sm:gap-5;
+    }
+
+    .game-lightbox-nav {
+        @apply flex size-11 shrink-0 items-center justify-center border-0 bg-transparent p-0 text-5xl leading-none text-white transition hover:text-lime-300 disabled:opacity-30;
+    }
+
+    .game-lightbox-image {
+        @apply max-h-[82vh] min-w-0 max-w-[calc(100%-6rem)] rounded-lg object-contain;
+    }
+
+    .game-lightbox-close {
+        @apply absolute top-2 right-2 flex size-10 items-center justify-center border-0 bg-transparent p-0 text-2xl leading-none text-white transition hover:text-lime-300 sm:-top-10 sm:right-0;
+    }
+
     .brand-link:focus-visible,
     .nav-link:focus-visible {
         @apply rounded outline-2 outline-offset-[5px] outline-lime-400;
