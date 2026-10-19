@@ -8,6 +8,12 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient<RawgApiClient>(client =>
     client.BaseAddress = new Uri("https://api.rawg.io/api/"));
+builder.Services.AddHttpClient<CheapSharkApiClient>(client =>
+{
+    client.BaseAddress = new Uri("https://www.cheapshark.com/api/1.0/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd(
+        "GameHub/1.0 (+https://github.com/cheryl7114/gaming-deals-hub)");
+});
 
 var app = builder.Build();
 
