@@ -2,21 +2,16 @@ namespace SOA_CA1.Models;
 
 public class ExchangeRate
 {
-    private string fromCurrency;
-    private string toCurrency;
-    private decimal rate;
-    private DateOnly date;
-
     public ExchangeRate(
         string fromCurrency,
         string toCurrency,
         decimal rate,
         DateOnly date)
     { 
-        this.fromCurrency = fromCurrency;
-        this.toCurrency = toCurrency;
-        this.rate = rate;
-        this.date = date;
+        FromCurrency = fromCurrency;
+        ToCurrency = toCurrency;
+        Rate = rate;
+        Date = date;
     }
 
     public string FromCurrency { get; }
@@ -26,6 +21,6 @@ public class ExchangeRate
 
     public decimal Convert(decimal amount)
     {
-        return amount * rate;
+        return amount * Rate;
     }
 }
