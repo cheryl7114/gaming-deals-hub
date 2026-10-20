@@ -3,6 +3,7 @@
 @using SOA_CA1.Models
 @inject RawgApiClient Rawg
 @inject CheapSharkApiClient CheapShark
+@inject FrankfurterApiClient Frankfurter
 
 <PageTitle>@(game?.Name ?? "Game details")</PageTitle>
 
@@ -108,12 +109,11 @@ else if (game is not null)
                                     <div class="deal-store">
                                         <p class="deal-store-name">@deal.StoreName</p>
                                         <p class="deal-normal-price">
-                                            Regular price: $@deal.NormalPriceUsd.ToString("0.00")
-                                        </p>
+                                            Regular price: @FormatEuroPrice(deal.NormalPriceUsd)                                        </p>
                                     </div>
                                     <div class="deal-offer-actions">
                                         <p class="deal-sale-price">
-                                            $@deal.SalePriceUsd.ToString("0.00")
+                                            @FormatEuroPrice(deal.SalePriceUsd)
                                         </p>
                                         @if (deal.DealUrl is not null)
                                         {
@@ -206,6 +206,7 @@ else if (game is not null)
     private List<Deal> deals = [];
     private bool dealsLoading;
     private string? dealsError;
+    private ExchangeRate? usdToEurRate;
 
     // The main artwork is the first item, followed by RAWG's extra screenshots.
     private List<string> Photos => game is null
@@ -234,6 +235,14 @@ else if (game is not null)
         {
             selectedPhotoIndex = (index + 1) % Photos.Count;
         }
+    }
+    
+    private string FormatEuroPrice(decimal priceUsd)
+    {
+        var priceEur = usdToEurRate!.Convert(priceUsd);
+        return priceEur.ToString(
+            "0.00",
+            System.Globalization.CultureInfo.InvariantCulture) + " €";
     }
 
     protected override async Task OnParametersSetAsync()
@@ -274,10 +283,14 @@ else if (game is not null)
             try
             {
                 deals = (await CheapShark.GetDealsForGameAsync(game.Name)).ToList();
+                if (deals.Count > 0)
+                {
+                    usdToEurRate = await Frankfurter.GetUsdToEurRateAsync();
+                }
             }
             catch (HttpRequestException ex)
             {
-                dealsError = $"CheapShark request failed: {ex.Message}";
+                dealsError = $"Price or exchange-rate request failed: {ex.Message}";
             }
             catch (InvalidDataException ex)
             {
@@ -285,7 +298,7 @@ else if (game is not null)
             }
             catch (System.Text.Json.JsonException ex)
             {
-                dealsError = $"CheapShark returned an invalid response: {ex.Message}";
+                dealsError = $"Exchange-rate response was invalid: {ex.Message}";
             }
             finally
             {

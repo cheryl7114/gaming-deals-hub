@@ -14,6 +14,8 @@ builder.Services.AddHttpClient<CheapSharkApiClient>(client =>
     client.DefaultRequestHeaders.UserAgent.ParseAdd(
         "GameHub/1.0 (+https://github.com/cheryl7114/gaming-deals-hub)");
 });
+builder.Services.AddHttpClient<FrankfurterApiClient>(client =>
+    client.BaseAddress = new Uri("https://api.frankfurter.dev/"));
 
 var app = builder.Build();
 
