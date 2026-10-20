@@ -240,9 +240,9 @@ else if (game is not null)
     private string FormatEuroPrice(decimal priceUsd)
     {
         var priceEur = usdToEurRate!.Convert(priceUsd);
-        return priceEur.ToString(
+        return "€" + priceEur.ToString(
             "0.00",
-            System.Globalization.CultureInfo.InvariantCulture) + " €";
+            System.Globalization.CultureInfo.InvariantCulture);
     }
 
     protected override async Task OnParametersSetAsync()
