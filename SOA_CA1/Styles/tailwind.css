@@ -391,6 +391,42 @@
         @apply text-slate-500;
     }
 
+    .deal-offer-list {
+        @apply m-0 list-none p-0;
+    }
+
+    .deal-offer {
+        @apply grid grid-cols-[minmax(0,1fr)_8rem_6rem] items-center gap-4 border-b border-white/10 py-5;
+    }
+
+    .deal-offer:last-child {
+        @apply border-b-0 pb-0;
+    }
+
+    .deal-store {
+        @apply min-w-0;
+    }
+
+    .deal-store-name {
+        @apply mb-1 break-words font-semibold text-slate-100;
+    }
+
+    .deal-normal-price {
+        @apply m-0 text-sm text-slate-400;
+    }
+
+    .deal-offer-actions {
+        display: contents;
+    }
+
+    .deal-sale-price {
+        @apply m-0 text-right font-bold tabular-nums text-lime-400;
+    }
+
+    .deal-link {
+        @apply justify-self-end whitespace-nowrap text-right font-semibold text-lime-300 underline-offset-4 transition hover:text-lime-200 hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-400;
+    }
+
     .game-artwork-button {
         @apply h-fit overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl shadow-black/30 focus-visible:outline-2 focus-visible:outline-lime-400;
     }
@@ -435,6 +471,21 @@
 
         .nav-tagline {
             @apply hidden;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .deal-offer {
+            @apply grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 py-4;
+        }
+
+        .deal-offer-actions {
+            @apply row-span-2 flex flex-col items-end justify-center gap-1;
+        }
+
+        .deal-sale-price,
+        .deal-link {
+            @apply text-right;
         }
     }
 

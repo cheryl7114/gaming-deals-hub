@@ -2,6 +2,8 @@
 @using SOA_CA1.ApiClients
 @using SOA_CA1.Models
 @inject RawgApiClient Rawg
+@inject CheapSharkApiClient CheapShark
+@inject FrankfurterApiClient Frankfurter
 
 <PageTitle>@(game?.Name ?? "Game details")</PageTitle>
 
@@ -82,6 +84,52 @@ else if (game is not null)
                         <p class="game-muted">Developer information not available.</p>
                     }
                 </div>
+
+                <section class="game-panel game-developers" aria-labelledby="deals-heading">
+                    <h2 id="deals-heading" class="game-panel-title">Compare prices</h2>
+
+                    @if (dealsLoading)
+                    {
+                        <p class="game-muted">Loading available offers...</p>
+                    }
+                    else if (dealsError is not null)
+                    {
+                        <p role="alert">@dealsError</p>
+                    }
+                    else if (deals.Count == 0)
+                    {
+                        <p class="game-muted">No offers are currently available.</p>
+                    }
+                    else
+                    {
+                        <ul class="deal-offer-list">
+                            @foreach (var deal in deals)
+                            {
+                                <li class="deal-offer">
+                                    <div class="deal-store">
+                                        <p class="deal-store-name">@deal.StoreName</p>
+                                        <p class="deal-normal-price">
+                                            Regular price: @FormatEuroPrice(deal.NormalPriceUsd)                                        </p>
+                                    </div>
+                                    <div class="deal-offer-actions">
+                                        <p class="deal-sale-price">
+                                            @FormatEuroPrice(deal.SalePriceUsd)
+                                        </p>
+                                        @if (deal.DealUrl is not null)
+                                        {
+                                            <a href="@deal.DealUrl"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="deal-link">
+                                                View deal
+                                            </a>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </section>
             </div>
 
             <aside class="game-sidebar">
@@ -155,6 +203,10 @@ else if (game is not null)
     private bool isLoading;
     private string? error;
     private int? selectedPhotoIndex;
+    private List<Deal> deals = [];
+    private bool dealsLoading;
+    private string? dealsError;
+    private ExchangeRate? usdToEurRate;
 
     // The main artwork is the first item, followed by RAWG's extra screenshots.
     private List<string> Photos => game is null
@@ -184,11 +236,23 @@ else if (game is not null)
             selectedPhotoIndex = (index + 1) % Photos.Count;
         }
     }
+    
+    private string FormatEuroPrice(decimal priceUsd)
+    {
+        var priceEur = usdToEurRate!.Convert(priceUsd);
+        return "€" + priceEur.ToString(
+            "0.00",
+            System.Globalization.CultureInfo.InvariantCulture);
+    }
 
     protected override async Task OnParametersSetAsync()
     {
         isLoading = true;
         error = null;
+        game = null;
+        deals = [];
+        dealsLoading = false;
+        dealsError = null;
 
         try
         {
@@ -209,6 +273,37 @@ else if (game is not null)
         finally
         {
             isLoading = false;
+        }
+
+        if (game is not null)
+        {
+            dealsLoading = true;
+            await InvokeAsync(StateHasChanged);
+
+            try
+            {
+                deals = (await CheapShark.GetDealsForGameAsync(game.Name)).ToList();
+                if (deals.Count > 0)
+                {
+                    usdToEurRate = await Frankfurter.GetUsdToEurRateAsync();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                dealsError = $"Price or exchange-rate request failed: {ex.Message}";
+            }
+            catch (InvalidDataException ex)
+            {
+                dealsError = ex.Message;
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                dealsError = $"Exchange-rate response was invalid: {ex.Message}";
+            }
+            finally
+            {
+                dealsLoading = false;
+            }
         }
     }
 }
