@@ -16,14 +16,14 @@
 else if (error is not null)
 {
     <main class="game-details-page game-details-error">
-        <a class="game-back-link" href="/">← Back to search</a>
+        <a class="game-back-link" href="@BackUrl">@BackLinkText</a>
         <p role="alert">@error</p>
     </main>
 }
 else if (game is not null)
 {
     <main class="game-details-page">
-        <a class="game-back-link" href="/">← Back to search</a>
+        <a class="game-back-link" href="@BackUrl">@BackLinkText</a>
 
         @if (Photos.Count > 0)
         {
@@ -206,6 +206,16 @@ else if (game is not null)
 @code {
     [Parameter]
     public int RawgId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "page")]
+    public int? CataloguePage { get; set; }
+
+    private string BackUrl => CataloguePage is > 0
+        ? $"/games?page={CataloguePage.Value}"
+        : "/";
+    private string BackLinkText => CataloguePage is > 0
+        ? "← Back to All Games"
+        : "← Back to search";
 
     private Game? game;
     private bool isLoading;

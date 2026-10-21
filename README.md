@@ -4,9 +4,11 @@ GameHub is a Blazor web app for discovering games and comparing current game dea
 
 ## Features
 
-- Browse popular games and search by title.
+- Browse full game catalogue with pagination.
+- Search for games by title.
 - View game descriptions, release dates, ratings, developers, artwork, and screenshots.
 - Compare available deals from CheapShark, with prices converted to EUR using Frankfurter exchange rates.
+- Click on a deal to open the retailer's website in a new tab.
 - Responsive interface built with Blazor and Tailwind CSS.
 
 ## Preview Screenshots

@@ -49,7 +49,7 @@
             <div class="home-game-grid">
                 @foreach (var game in games)
                 {
-                    <a class="home-game-card group" href="@($"/games/{game.RawgId}")" aria-label="@($"View details for {game.Name}")">
+                    <a class="home-game-card group" href="@($"/games/{game.RawgId}?page={currentPage}")" aria-label="@($"View details for {game.Name}")">
                         <div class="home-game-art">
                             @if (game.ArtworkUrl is not null)
                             {
@@ -95,13 +95,17 @@
 </main>
 
 @code {
+    [SupplyParameterFromQuery(Name = "page")]
+    public int? RequestedPage { get; set; }
+
     private List<Game> games = [];
     private int currentPage = 1;
     private bool hasNextPage;
     private bool isLoading;
     private string? error;
 
-    protected override Task OnInitializedAsync() => LoadPageAsync(currentPage);
+    protected override Task OnParametersSetAsync() =>
+        LoadPageAsync(RequestedPage is > 0 ? RequestedPage.Value : 1);
 
     private async Task LoadPageAsync(int page)
     {
