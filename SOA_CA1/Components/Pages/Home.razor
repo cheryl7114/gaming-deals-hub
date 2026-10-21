@@ -41,10 +41,6 @@
                         : "Popular picks based on how many players have added them to their lists.")
                 </p>
             </div>
-            @if (!isSearchResults && games.Count > 0)
-            {
-                <span class="home-results-count">@games.Count games</span>
-            }
         </div>
 
         @if (error is not null)
