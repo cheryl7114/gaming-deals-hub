@@ -80,6 +80,16 @@ public class RawgApiClientTests
     }
 
     [Fact]
+    public async Task GetCatalogueGamesAsync_RejectsInvalidPage()
+    {
+        var client = CreateClient(new StubHttpMessageHandler((_, _) =>
+            throw new InvalidOperationException("No request should be sent.")), "key");
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => client.GetCatalogueGamesAsync(0));
+    }
+
+    [Fact]
     public async Task SearchGamesAsync_RequiresConfiguredApiKey()
     {
         // Missing configuration should fail before any HTTP request is attempted.

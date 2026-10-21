@@ -65,7 +65,31 @@ public class RawgApiClient(HttpClient httpClient, IConfiguration configuration)
         return await GetGamesAsync(url, cancellationToken);
     }
 
+    public async Task<(IReadOnlyList<Game> Games, bool HasNextPage)> GetCatalogueGamesAsync(
+        int page,
+        CancellationToken cancellationToken = default)
+    {
+        if (page <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(page));
+        }
+
+        var url = BuildApiUrl("games", $"&page_size=16&page={page}");
+        var response = await GetGamesResponseAsync(url, cancellationToken);
+
+        return (response.Results!.Select(MapGame).ToArray(), response.Next is not null);
+    }
+
     private async Task<IReadOnlyList<Game>> GetGamesAsync(
+        string url,
+        CancellationToken cancellationToken)
+    {
+        var response = await GetGamesResponseAsync(url, cancellationToken);
+
+        return response.Results!.Select(MapGame).ToArray();
+    }
+
+    private async Task<RawgGamesResponse> GetGamesResponseAsync(
         string url,
         CancellationToken cancellationToken)
     {
@@ -80,7 +104,7 @@ public class RawgApiClient(HttpClient httpClient, IConfiguration configuration)
                 "RAWG returned a games response without a results list.");
         }
 
-        return response.Results.Select(MapGame).ToArray();
+        return response;
     }
 
     private string BuildApiUrl(string path, string query = "")
@@ -119,6 +143,9 @@ public class RawgApiClient(HttpClient httpClient, IConfiguration configuration)
     {
         [JsonPropertyName("results")]
         public List<RawgGameDto>? Results { get; set; }
+
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
     }
 
     private class RawgGameDto
