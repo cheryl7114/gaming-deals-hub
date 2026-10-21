@@ -63,14 +63,18 @@ else if (game is not null)
                     </div>
                     <div class="game-meta-card">
                         <p class="game-meta-label">Rating</p>
-                        <p class="game-meta-value"><span>⭐</span> @(game.Rating?.ToString() ?? "Not rated")</p>                    </div>
+                        <p class="game-meta-value">
+                            <span>⭐</span> @(game.Rating?.ToString() ?? "Not rated")
+                        </p>
+                    </div>
                 </div>
 
                 <div class="game-panel">
                     <h2 class="game-panel-title">About this game</h2>
                     <p class="game-description">@(string.IsNullOrWhiteSpace(game.Description)
                         ? "Description not available."
-                        : game.Description)</p>
+                        : game.Description)
+                    </p>
                 </div>
 
                 <div class="game-panel game-developers">
@@ -112,7 +116,8 @@ else if (game is not null)
                                     <div class="deal-store">
                                         <p class="deal-store-name">@deal.StoreName</p>
                                         <p class="deal-normal-price">
-                                            Regular price: @FormatEuroPrice(deal.NormalPriceUsd)                                        </p>
+                                            Regular price: @FormatEuroPrice(deal.NormalPriceUsd)
+                                        </p>
                                     </div>
                                     <div class="deal-offer-actions">
                                         <p class="deal-sale-price">

@@ -117,37 +117,8 @@
         await LoadPopularGamesAsync();
     }
 
-    private async Task LoadPopularGamesAsync()
-    {
-        isLoading = true;
-        error = null;
-        isSearchResults = false;
-
-        try
-        {
-            games = (await Rawg.GetPopularGamesAsync()).ToList();
-        }
-        catch (HttpRequestException ex)
-        {
-            error = $"RAWG request failed: {ex.Message}";
-        }
-        catch (System.Text.Json.JsonException ex)
-        {
-            error = $"RAWG returned an invalid JSON response: {ex.Message}";
-        }
-        catch (InvalidDataException ex)
-        {
-            error = ex.Message;
-        }
-        catch (InvalidOperationException ex)
-        {
-            error = ex.Message;
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
+    private Task LoadPopularGamesAsync() =>
+        LoadGamesAsync(() => Rawg.GetPopularGamesAsync(), false);
 
     private async Task SearchAsync()
     {
@@ -158,13 +129,20 @@
             return;
         }
 
+        await LoadGamesAsync(() => Rawg.SearchGamesAsync(searchTerm), true);
+    }
+
+    private async Task LoadGamesAsync(
+        Func<Task<IReadOnlyList<Game>>> loadGames,
+        bool searchResults)
+    {
         isLoading = true;
         error = null;
-        isSearchResults = true;
+        isSearchResults = searchResults;
 
         try
         {
-            games = (await Rawg.SearchGamesAsync(searchTerm)).ToList();
+            games = (await loadGames()).ToList();
         }
         catch (HttpRequestException ex)
         {

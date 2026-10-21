@@ -38,12 +38,12 @@ public class CheapSharkApiClient(HttpClient httpClient)
             throw new InvalidDataException(
                 "CheapShark returned game details without a deals list.");
         }
-        
+
         var stores = await GetAsync<List<StoreDetails>>("stores", cancellationToken);
         var storeNames = stores.ToDictionary(store => store.StoreId, store => store.StoreName);
 
         return details.Deals
-            .Select(deal => MapDeal(deal, match.GameId, storeNames))
+            .Select(deal => MapDeal(deal, storeNames))
             .OrderBy(deal => deal.SalePriceUsd)
             .ToArray();
     }
@@ -69,7 +69,9 @@ public class CheapSharkApiClient(HttpClient httpClient)
                 $"CheapShark returned an empty response for {path}.");
     }
 
-    private static Deal MapDeal(CheapSharkDeal deal, string gameId, IReadOnlyDictionary<string, string?> storeNames)
+    private static Deal MapDeal(
+        CheapSharkDeal deal,
+        IReadOnlyDictionary<string, string> storeNames)
     {
         if (string.IsNullOrWhiteSpace(deal.DealId)
             || string.IsNullOrWhiteSpace(deal.StoreId))
@@ -80,7 +82,6 @@ public class CheapSharkApiClient(HttpClient httpClient)
 
         var storeName = storeNames.GetValueOrDefault(deal.StoreId) ?? deal.StoreId;
         var dealId = Uri.UnescapeDataString(deal.DealId);
-        
 
         return new Deal(
             storeName,
@@ -132,9 +133,6 @@ public class CheapSharkApiClient(HttpClient httpClient)
 
         [JsonPropertyName("retailPrice")]
         public string? RetailPrice { get; set; }
-
-        [JsonPropertyName("store")]
-        public StoreDetails? Store { get; set; }
     }
 
     private class StoreDetails
