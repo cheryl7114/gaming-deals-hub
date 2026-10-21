@@ -87,6 +87,9 @@ else if (game is not null)
 
                 <section class="game-panel game-developers" aria-labelledby="deals-heading">
                     <h2 id="deals-heading" class="game-panel-title">Compare prices</h2>
+                    <p class="deal-disclaimer">
+                        Prices are converted from USD to EUR; the actual price on the retailer’s site may differ.
+                    </p>
 
                     @if (dealsLoading)
                     {
@@ -262,6 +265,10 @@ else if (game is not null)
         {
             error = $"RAWG request failed: {ex.Message}";
         }
+        catch (System.Text.Json.JsonException ex)
+        {
+            error = $"RAWG returned an invalid JSON response: {ex.Message}";
+        }
         catch (InvalidOperationException ex)
         {
             error = ex.Message;
@@ -282,23 +289,42 @@ else if (game is not null)
 
             try
             {
-                deals = (await CheapShark.GetDealsForGameAsync(game.Name)).ToList();
-                if (deals.Count > 0)
+                try
                 {
-                    usdToEurRate = await Frankfurter.GetUsdToEurRateAsync();
+                    deals = (await CheapShark.GetDealsForGameAsync(game.Name)).ToList();
                 }
-            }
-            catch (HttpRequestException ex)
-            {
-                dealsError = $"Price or exchange-rate request failed: {ex.Message}";
-            }
-            catch (InvalidDataException ex)
-            {
-                dealsError = ex.Message;
-            }
-            catch (System.Text.Json.JsonException ex)
-            {
-                dealsError = $"Exchange-rate response was invalid: {ex.Message}";
+                catch (HttpRequestException ex)
+                {
+                    dealsError = $"CheapShark request failed: {ex.Message}";
+                }
+                catch (InvalidDataException ex)
+                {
+                    dealsError = $"CheapShark returned invalid data: {ex.Message}";
+                }
+                catch (System.Text.Json.JsonException ex)
+                {
+                    dealsError = $"CheapShark returned an invalid JSON response: {ex.Message}";
+                }
+
+                if (deals.Count > 0 && dealsError is null)
+                {
+                    try
+                    {
+                        usdToEurRate = await Frankfurter.GetUsdToEurRateAsync();
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        dealsError = $"Frankfurter exchange-rate request failed: {ex.Message}";
+                    }
+                    catch (InvalidDataException ex)
+                    {
+                        dealsError = $"Frankfurter returned invalid exchange-rate data: {ex.Message}";
+                    }
+                    catch (System.Text.Json.JsonException ex)
+                    {
+                        dealsError = $"Frankfurter returned an invalid JSON response: {ex.Message}";
+                    }
+                }
             }
             finally
             {

@@ -90,6 +90,32 @@ public class RawgApiClientTests
             () => client.SearchGamesAsync("game"));
     }
 
+    [Theory]
+    [InlineData("null")]
+    [InlineData("{}")]
+    [InlineData("""{"results":null}""")]
+    public async Task SearchGamesAsync_RejectsMissingResults(string json)
+    {
+        var client = CreateClient(new StubHttpMessageHandler((_, _) =>
+            Task.FromResult(StubHttpMessageHandler.JsonResponse(json))), "key");
+
+        await Assert.ThrowsAsync<InvalidDataException>(
+            () => client.SearchGamesAsync("game"));
+    }
+
+    [Theory]
+    [InlineData("null")]
+    [InlineData("{}")]
+    [InlineData("""{"results":null}""")]
+    public async Task GetPopularGamesAsync_RejectsMissingResults(string json)
+    {
+        var client = CreateClient(new StubHttpMessageHandler((_, _) =>
+            Task.FromResult(StubHttpMessageHandler.JsonResponse(json))), "key");
+
+        await Assert.ThrowsAsync<InvalidDataException>(
+            () => client.GetPopularGamesAsync());
+    }
+
     private static RawgApiClient CreateClient(
         HttpMessageHandler handler,
         string? apiKey)

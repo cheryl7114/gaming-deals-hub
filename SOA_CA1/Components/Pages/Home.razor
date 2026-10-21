@@ -131,6 +131,14 @@
         {
             error = $"RAWG request failed: {ex.Message}";
         }
+        catch (System.Text.Json.JsonException ex)
+        {
+            error = $"RAWG returned an invalid JSON response: {ex.Message}";
+        }
+        catch (InvalidDataException ex)
+        {
+            error = ex.Message;
+        }
         catch (InvalidOperationException ex)
         {
             error = ex.Message;
@@ -161,6 +169,14 @@
         catch (HttpRequestException ex)
         {
             error = $"RAWG request failed: {ex.Message}";
+        }
+        catch (System.Text.Json.JsonException ex)
+        {
+            error = $"RAWG returned an invalid JSON response: {ex.Message}";
+        }
+        catch (InvalidDataException ex)
+        {
+            error = ex.Message;
         }
         catch (InvalidOperationException ex)
         {

@@ -14,10 +14,7 @@ public class RawgApiClient(HttpClient httpClient, IConfiguration configuration)
         ArgumentException.ThrowIfNullOrWhiteSpace(search);
 
         var url = BuildApiUrl("games", $"&search={Uri.EscapeDataString(search)}");
-        var response = await httpClient.GetFromJsonAsync<RawgGamesResponse>(
-            url, cancellationToken);
-
-        return response?.Results?.Select(MapGame).ToArray() ?? [];
+        return await GetGamesAsync(url, cancellationToken);
     }
 
     // get full game details 
@@ -65,10 +62,25 @@ public class RawgApiClient(HttpClient httpClient, IConfiguration configuration)
         CancellationToken cancellationToken = default)
     {
         var url = BuildApiUrl("games", "&page_size=12&ordering=-added");
-        var response = await httpClient.GetFromJsonAsync<RawgGamesResponse>(
-            url, cancellationToken);
+        return await GetGamesAsync(url, cancellationToken);
+    }
 
-        return response?.Results?.Select(MapGame).ToArray() ?? [];
+    private async Task<IReadOnlyList<Game>> GetGamesAsync(
+        string url,
+        CancellationToken cancellationToken)
+    {
+        var response = await httpClient.GetFromJsonAsync<RawgGamesResponse>(
+                           url, cancellationToken)
+                       ?? throw new InvalidDataException(
+                           "RAWG returned an empty games response.");
+
+        if (response.Results is null)
+        {
+            throw new InvalidDataException(
+                "RAWG returned a games response without a results list.");
+        }
+
+        return response.Results.Select(MapGame).ToArray();
     }
 
     private string BuildApiUrl(string path, string query = "")
